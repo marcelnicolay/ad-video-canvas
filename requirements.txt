@@ -1,2 +1,3 @@
 pyiqe
 tornado
+PIL

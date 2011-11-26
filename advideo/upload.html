@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Déjà Vu</title>
+    <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+    <script src="/static/send_file.js"></script>
+    <script src="/static/ad.js"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+    return false;
+
+    var video = $('#my_video');
+    var my_canvas = $('#my_canvas')[0];
+    var canvas_context = my_canvas.getContext("2d");
+    var backcanvas = $('<canvas>',{attr:{width:300,height:300 }})[0];
+    var backcanvas_context = backcanvas.getContext('2d');
+    var w = 300;
+    var h = 300;
+
+    video.bind('play', function (event) {
+        //console.info("video play", );
+        draw(video[0], backcanvas_context);
+    });
+
+    function draw(vid, bc) {
+        if (vid.paused || vid.ended) {
+            return false;
+        }
+        //canvas_context.drawImage(vid,0,0,w,h);
+        bc.drawImage(vid,0,0,w,h);
+        data_url = bc.toDataURL("image/jpeg")
+        //data = bc.getImageData(0,0,w,h);
+        //setTimeout(draw, 20, vid, bc);
+    }
+});
+</script>
+</head>
+<body>
+    <h1>Déjà Vu</h1>
+
+    <form method="post">
+        <fieldset id="upload-file">
+            <legend>Upload image</legend>
+
+            <div class="clearfix">
+                <label for="media-files">File</label>
+                <div class="input">
+                    <input type="file" name="media_file" id="media-file">
+                </div>
+            </div>
+
+            <div class='actions'>
+                <button class="btn primary" id="send-file" data-loading-text="uploading...">Send file</button>
+            </div>
+        </fieldset>
+
+        <p>The product is: <span id="response"></span></p>
+        <p><img id="img"></p>
+    </form>
+</body>
+</html>

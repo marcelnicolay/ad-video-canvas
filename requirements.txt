@@ -1,3 +1,5 @@
 pyiqe
 tornado
+simplejson
+python-memcached
 PIL

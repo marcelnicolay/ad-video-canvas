@@ -2,6 +2,7 @@
 #!/usr/bin/env python
 
 import os, sys, atexit, getopt
+import tornado.web
 import tornado.options
 import tornado.ioloop
 import logging
@@ -22,10 +23,12 @@ def main():
     
     logging.getLogger().setLevel(getattr(logging, tornado.options.options.logging.upper())) 
     
-    from advideo.handler import FindAdHandler
+    from advideo.handler import FindAdHandler, ImgProcHandler
 
     application = tornado.web.Application([
+        (r"/", ImgProcHandler),
         (r"/findad", FindAdHandler),
+        (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": os.path.join(os.path.dirname(__file__), "static")}),
     ])
     
     application.listen(8888)

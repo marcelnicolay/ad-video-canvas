@@ -3,14 +3,22 @@ import json
 import time
 import base64
 
-import tornado.ioloop
-import tornado.web
+from tornado import web
+from tornado import gen
 from pyiqe import Api
 
-from image_processing import calc_hash
-from cache import Memcached
+from advideo.buscape import Vitrine
+from advideo.image_processing import calc_hash
+from advideo.cache import Memcached
 
-class FindAdHandler(tornado.web.RequestHandler):
+class FindAdHandler(web.RequestHandler):
+    @web.asynchronous
+    @gen.engine
+    def get(self):
+        vitrine = yield gen.Task(Vitrine().getByKeyword, "Apple iphone")
+        self.write("Hello, world")
+
+class ImgProcHandler(web.RequestHandler):
 
     def post(self):
         IQE_KEY = '0e640412a82a4896bfb40bb53429729b'
@@ -48,13 +56,3 @@ class FindAdHandler(tornado.web.RequestHandler):
 
     def get(self):
         self.write(open('./upload.html').read())
-
-
-application = tornado.web.Application([
-    (r"/findad", FindAdHandler),
-    (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": os.path.join(os.path.dirname(__file__), "static")}),
-])
-
-if __name__ == "__main__":
-    application.listen(8888)
-    tornado.ioloop.IOLoop.instance().start()

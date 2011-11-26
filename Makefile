@@ -22,7 +22,8 @@ clean:
 
 start:
 	@echo "Running $(PROJECT_NAME) on $(OK_COLOR)$(URL)$(NO_COLOR)..."
-	@cd $(PROJECT_PACKAGE) && python application.py
+	@export PYTHONPATH=$PYTHONPATH:`pwd`/$(PROJECT_PACKAGE) && \
+		cd $(PROJECT_PACKAGE) && python start.py
 
 test: clean
 	@echo "Running $(PROJECT_NAME) unit tests..."

@@ -9,11 +9,7 @@ import urllib
 import httplib
 import functools
 
-from advideo import imaging
 from tornado import gen
-
-
-
 
 class Vitrine(object):
 
@@ -23,13 +19,12 @@ class Vitrine(object):
 
     def as_dict(self):
     
-        return { 'url':self.url, 'name':self.name, 'produto_id': self.produto_id }
+        return { 'name':self.name, 'produto_id': self.produto_id, 'pricemin':self.price_min, 'thumb': self.buscape_image_url }
 
     @gen.engine
     def getByKeyword(self, keyword, callback):
     
         produto_buscape = yield gen.Task(Produto.getProductByName, keyword)
-        import pdb;pdb.set_trace()
         
         if not produto_buscape:
             produto_buscape = yield gen.Task(Produto.getTopProduct)
@@ -41,7 +36,6 @@ class Vitrine(object):
             pricemin = produto_buscape.get('pricemin'),
             pricemax = produto_buscape.get('pricemax')
         )
-        import pdb;pdb.set_trace()
         callback(vitrine)
 
 
@@ -54,24 +48,7 @@ class Vitrine(object):
         vitrine.pricemin = pricemin
         vitrine.pricemax = pricemax
 
-        # create vitrine
-        vitrine.create()
-
         return vitrine
-    
-    def create(self):
-    
-        try:
-        
-            title = self.name
-    
-            image_name = imaging.ComposeImage.compose(image_url=self.buscape_image_url, image_path=options.IMAGE_PATH, title=title, price= (self.pricemin, self.pricemax) )
-    
-            self.url = "%s/%s" % (options.IMAGE_URL, image_name)
-        except:
-            logging.exception("falha ao criar a imagem de vitrine %s, %s, %s" % (self.buscape_image_url, options.IMAGE_PATH, title ))
-        
-            raise ValueError("Falha ao criar a imagem")
         
 class Produto(object):
 	

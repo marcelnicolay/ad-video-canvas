@@ -12,6 +12,7 @@ from advideo.image_processing import calc_hash
 from advideo.cache import Memcached
 
 class FindAdHandler(web.RequestHandler):
+    
     @web.asynchronous
     @gen.engine
     def get(self):
@@ -20,6 +21,8 @@ class FindAdHandler(web.RequestHandler):
 
 class ImgProcHandler(web.RequestHandler):
 
+    @web.asynchronous
+    @gen.engine
     def post(self):
         IQE_KEY = '0e640412a82a4896bfb40bb53429729b'
         IQE_SECRET = '310970e406d94f9db24b2c527d7ae6d9'
@@ -44,9 +47,12 @@ class ImgProcHandler(web.RequestHandler):
                     'product_name': res['qid_data']['labels'],
                 }
                 results.append(data)
+                
+            vitrine = yield gen.Task(Vitrine().getByKeyword, results[0] if results else '')
+            
             response = {
-                'results': results,
                 'img_data': 'data:image/jpeg;base64,%s' % base64.b64encode(self.request.body),
+                'vitrine_url': vitrine.as_dict()
             }
             cached_response = json.dumps(response)
             cache.set(hash_value, cached_response)

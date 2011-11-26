@@ -10,6 +10,8 @@ from advideo.buscape import Vitrine
 from advideo.image_processing import calc_hash
 from advideo.cache import Memcached
 
+class DemoHandler(web.RequestHandler):
+    pass
 class FindAdHandler(web.RequestHandler):
     
     @web.asynchronous
@@ -20,9 +22,8 @@ class FindAdHandler(web.RequestHandler):
 
 class ImgProcHandler(web.RequestHandler):
 
-    @web.asynchronous
-    @gen.engine
-    def post(self):
+    def _get_keyword(self):
+        
         IQE_KEY = '0e640412a82a4896bfb40bb53429729b'
         IQE_SECRET = '310970e406d94f9db24b2c527d7ae6d9'
 
@@ -30,7 +31,7 @@ class ImgProcHandler(web.RequestHandler):
 
         #file_image = self.request.files['']
         hash_value = calc_hash(self.request.body)
-        cached_response = cache.get(hash_value)
+        keyword = cache.get(hash_value)
         if not cached_response:
             file_image = '/tmp/%s.jpg' % hash_value
             open(file_image, 'w').write(self.request.body)
@@ -46,19 +47,28 @@ class ImgProcHandler(web.RequestHandler):
                     'product_name': res['qid_data']['labels'],
                 }
                 results.append(data)
-                
-            vitrine = yield gen.Task(Vitrine().getByKeyword, results[0] if results else '')
             
-            response = {
-                'img_data': 'data:image/jpeg;base64,%s' % base64.b64encode(self.request.body),
-                'vitrine_url': vitrine.as_dict()
-            }
-            cached_response = json.dumps(response)
-            cache.set(hash_value, cached_response)
+            keyword = " ".join(results)
+            
+            cache.set(hash_value, keyword)
+        
+        return keyword
 
+    @web.asynchronous
+    @gen.engine
+    def post(self):
+        
+        keyword = self._get_keyword()
+        vitrine = yield gen.Task(Vitrine().getByKeyword, keyword)
+
+        response = {
+            'vitrine': vitrine.as_dict()
+        }
+        
         self.set_header('Content-type', 'application/json; charset=utf-8')
-        self.write(cached_response)
-
+        self.write(json.dumps(response))
+        self.finish()
+        
     def get(self):
         tpl = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'upload.html')
         self.write(open(tpl).read())

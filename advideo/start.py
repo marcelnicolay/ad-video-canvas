@@ -24,11 +24,12 @@ def main():
     
     logging.getLogger().setLevel(getattr(logging, tornado.options.options.logging.upper())) 
     
-    from advideo.handler import FindAdHandler, ImgProcHandler
+    from advideo.handler import FindAdHandler, ImgProcHandler, DemoHandler
 
     application = tornado.web.Application([
         (r"/", ImgProcHandler),
         (r"/findad", FindAdHandler),
+        (r"/demo", DemoHandler),
         (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": os.path.join(os.path.dirname(__file__), "static")}),
     ])
     

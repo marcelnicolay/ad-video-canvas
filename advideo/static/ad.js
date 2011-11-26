@@ -25,13 +25,8 @@ $(document).ready(function () {
         upload_percent.text("100%");
 
         var response = JSON.parse(xhr.responseText);
-        var text = [];
-        for (var i=0; i < response['results'].length ;i++) {
-            text.push(response['results'][i].product_name);
-        }
-        $('#media_file').val("");
-        $('#response').text(text.join(", "));
-        $('#img')[0].src = response['img_data'];
+
+        $('#vitrine').html("<a href='"+response.vitrine.compare+"' target='_blank'><img width='100' height='100' src='"+response.vitrine.thumb+"' align='left'/> <b>"+response.vitrine.name+"</b> <br> a partir de R$"+response.vitrine.pricemin+"</a>");
         $('#upload-progress').remove();
     }
 

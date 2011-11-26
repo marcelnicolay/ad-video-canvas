@@ -54,4 +54,5 @@ class ImgProcHandler(web.RequestHandler):
         self.write(cached_response)
 
     def get(self):
-        self.write(open('./upload.html').read())
+        tpl = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'upload.html')
+        self.write(open(tpl).read())

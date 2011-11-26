@@ -28,7 +28,7 @@ def main():
     application = tornado.web.Application([
         (r"/", ImgProcHandler),
         (r"/findad", FindAdHandler),
-        (r"/static/(.*)", web.StaticFileHandler, {"path": os.path.join(os.path.dirname(__file__), "static")}),
+        (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": os.path.join(os.path.dirname(__file__), "static")}),
     ])
     
     application.listen(8888)

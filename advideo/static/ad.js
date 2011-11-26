@@ -44,7 +44,7 @@ $(document).ready(function () {
         input_file.parent().append(upload_progress);
         upload_percent.insertAfter(upload_progress);
 
-        url = '/findad';
+        url = '/';
 
         opts = {
             url: url,

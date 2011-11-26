@@ -3,8 +3,7 @@ import json
 import time
 import base64
 
-from tornado import web
-from tornado import gen
+from tornado import gen, web
 from pyiqe import Api
 
 from advideo.buscape import Vitrine

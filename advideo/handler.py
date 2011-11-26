@@ -3,8 +3,7 @@ import json
 import time
 import base64
 
-from tornado import web
-from tornado import gen
+from tornado import gen, web
 from pyiqe import Api
 
 from advideo.buscape import Vitrine
@@ -61,4 +60,5 @@ class ImgProcHandler(web.RequestHandler):
         self.write(cached_response)
 
     def get(self):
-        self.write(open('./upload.html').read())
+        tpl = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'upload.html')
+        self.write(open(tpl).read())

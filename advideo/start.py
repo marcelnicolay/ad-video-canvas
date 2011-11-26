@@ -32,7 +32,7 @@ def main():
         (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": os.path.join(os.path.dirname(__file__), "static")}),
     ])
     
-    application.listen(8888)
+    application.listen(18888)
     tornado.ioloop.IOLoop.instance().start()
         
 if __name__ == "__main__":
